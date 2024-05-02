@@ -1,11 +1,12 @@
 import { Router } from "express";
-import { basicAuthMiddleware } from "./dto";
-import { loginLogicMiddleware, registerLogicMiddleware } from "./middlewares";
+import { basicAuthDtoMiddleware } from "./dto";
+import { loginLogicMiddleware, logoutLogicMiddleware, registerLogicMiddleware } from "./middlewares";
+import { extractAccount } from "../../constants/middlewares.auth";
 
 const router = Router();
 
-router.post("/register", basicAuthMiddleware, registerLogicMiddleware);
-router.post("/login", basicAuthMiddleware, loginLogicMiddleware);
-router.post("/logout");
+router.post("/register", basicAuthDtoMiddleware, registerLogicMiddleware);
+router.post("/login", basicAuthDtoMiddleware, loginLogicMiddleware);
+router.post("/logout", extractAccount(), logoutLogicMiddleware);
 
 export const authRouter = router;

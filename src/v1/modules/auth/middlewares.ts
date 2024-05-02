@@ -8,10 +8,16 @@ export async function registerLogicMiddleware(req: Request, res: Response) {
     let account: Account | null;
     try {
         account = await AccountService.readByUsername(req.body.username);
-        if (account != null) return res.status(422).json(baseMessages.DUPLICATED);
+        const message: ErrorMessage = {
+            ...baseMessages.RESOURCE_DUPLICATED,
+            error: {
+                desc: "This username is taken."
+            }
+        }
+        if (account != null) return res.status(422).json(message);
     } catch (err) {
         const message: ErrorMessage = {
-            ...baseMessages.CREATE_FAILED,
+            ...baseMessages.RESOURCE_LOOKUP_FAILED,
             error: {
                 desc: "An error has occured when checking account."
             }
@@ -27,7 +33,7 @@ export async function registerLogicMiddleware(req: Request, res: Response) {
         return res.status(201).json(baseMessages.OK);
     } catch (err) {
         const message: ErrorMessage = {
-            ...baseMessages.CREATE_FAILED,
+            ...baseMessages.RESOURCE_CREATION_FAILED,
             error: {
                 desc: "An error has occured when creating account."
             }
@@ -41,15 +47,15 @@ export async function loginLogicMiddleware(req: Request, res: Response) {
     try {
         account = await AccountService.readByUsername(req.body.username);
         const message: ErrorMessage = {
-            ...baseMessages.LOGIN_FAILED,
+            ...baseMessages.UNAUTHORIZED,
             error: {
                 desc: "Username or password isn't correct."
             }
         }
-        if (account == null) return res.status(422).json(message);
+        if (account == null) return res.status(401).json(message);
     } catch (err) {
         const message: ErrorMessage = {
-            ...baseMessages.LOGIN_FAILED,
+            ...baseMessages.RESOURCE_LOOKUP_FAILED,
             error: {
                 desc: "An error has occured when checking account."
             }
@@ -71,9 +77,26 @@ export async function loginLogicMiddleware(req: Request, res: Response) {
         }
     } catch (err) {
         const message: ErrorMessage = {
-            ...baseMessages.LOGIN_FAILED,
+            ...baseMessages.RESOURCE_CREATION_FAILED,
             error: {
                 desc: "An error has occured when logging in."
+            }
+        }
+        return res.status(500).json(message);
+    }
+}
+
+export async function logoutLogicMiddleware(req: Request, res: Response) {
+    const account = res.locals.account;
+
+    try {
+        await AccountService.updateToken(account, null);
+        return res.status(200).json(baseMessages.OK);
+    } catch (err) {
+        const message: ErrorMessage = {
+            ...baseMessages.RESOURCE_DELETION_FAILED,
+            error: {
+                desc: "An error has occured when logging out."
             }
         }
         return res.status(500).json(message);

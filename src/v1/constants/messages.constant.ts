@@ -3,27 +3,38 @@ export const baseMessages = {
         code: 1000,
         msg: "OK."
     },
-    NOT_FOUND: {
+    RESOURCE_NOT_FOUND: {
         code: 1001,
-        msg: "The requested resources are not found."
+        msg: "The requested resource isn't exist."
     },
-    INVALID_PARAM: {
+    INVALID_PARAMS: {
         code: 1002,
         msg: "The parameters are invalid."
     },
-    CREATE_FAILED: {
+    UNAUTHORIZED: {
         code: 1003,
-        msg: "The resource creation failed."
-    },
-    DUPLICATED: {
-        code: 1004,
-        msg: "There's already another resource with these information."
-    },
-    LOGIN_FAILED: {
-        code: 1005,
         msg: "Login failed."
     },
-
+    INVALID_TOKEN: {
+        code: 1004,
+        msg: "Token is missing or invalid."
+    },
+    RESOURCE_CREATION_FAILED: {
+        code: 1005,
+        msg: "The resource creation failed."
+    },
+    RESOURCE_LOOKUP_FAILED: {
+        code: 1006,
+        msg: "An error occured when looking up for resource."
+    },
+    RESOURCE_DUPLICATED: {
+        code: 1007,
+        msg: "This info is already used."
+    },
+    RESOURCE_DELETION_FAILED: {
+        code: 1008,
+        msg: "An error occured when deleting resource."
+    },
 }
 
 export interface BaseMessage {

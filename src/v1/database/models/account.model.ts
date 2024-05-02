@@ -1,24 +1,28 @@
-import { CreationOptional, DataTypes, Model } from "@sequelize/core";
-import { Attribute, AutoIncrement, Index, NotNull, PrimaryKey, Table, Unique } from "@sequelize/core/decorators-legacy";
+import { CreationOptional, DataTypes, Model, NonAttribute, sql } from "@sequelize/core";
+import { Attribute, Default, DeletedAt, HasOne, PrimaryKey, Unique } from "@sequelize/core/decorators-legacy";
+import { User } from "./user.model";
 
-@Table({
-    name: {
-        singular: "account",
-        plural: "accounts"
-    },
-    timestamps: true,
-    deletedAt: true
-})
 export class Account extends Model {
-    @Attribute(DataTypes.STRING(20))
-    @PrimaryKey()
+    @Attribute(DataTypes.UUID.V4)
+    @PrimaryKey
+    @Default(sql.uuidV4)
+    declare id: CreationOptional<string>;
+
+    @Attribute(DataTypes.STRING)
+    @Unique
     declare username: string;
 
     @Attribute(DataTypes.STRING)
     declare password: string;
 
     @Attribute(DataTypes.STRING)
-    declare token: CreationOptional<string>;
+    declare token: CreationOptional<string | null>;
+
+    @DeletedAt
+    declare deletedAt: Date | null;
+
+    @HasOne(() => User, "accountId")
+    declare user: NonAttribute<User>;
 }
 
 export class AccountService {
@@ -30,10 +34,14 @@ export class AccountService {
     }
 
     static async readByUsername(username: string) {
-        return Account.findByPk(username);
+        return Account.findOne({
+            where: {
+                username
+            }
+        });
     }
 
-    static async updateToken(account: Account, token: string) {
+    static async updateToken(account: Account, token: string | null) {
         account.token = token;
         return account.save();
     }

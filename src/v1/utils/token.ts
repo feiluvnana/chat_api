@@ -20,5 +20,5 @@ export class TokenUtils {
 }
 
 export interface TokenPayload {
-	username: number
+	username: string
 }

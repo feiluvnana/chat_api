@@ -1,4 +1,6 @@
-﻿export class LoggerUtils {
+﻿import { NextFunction, Request, Response } from "express";
+
+export class LoggerUtils {
     static e(data: object): void {
         data = {
             ...data,
@@ -56,6 +58,35 @@
         };
         let str = JSON.stringify(data, null, 2);
         console.log(`x1b[4m\x1b[1m\x1b[5m\x1b[37m[WTF!? 🤨] ${str}\x1b[0m`);
+    }
+
+    static express(params?: {
+
+    }) {
+        return (req: Request, res: Response, next: NextFunction) => {
+            let payload = {};
+            switch (req.method.toLowerCase()) {
+                case "get":
+                    payload = {
+                        authorization: req.headers.authorization,
+                        query: req.query,
+                        path: req.path
+                    }
+                    break;
+                case "post":
+                    payload = {
+                        authorization: req.headers.authorization,
+                        body: req.body,
+                        path: req.path
+                    }
+                    break;
+            }
+            LoggerUtils.v({
+                method: req.method,
+                ...payload
+            });
+            return next();
+        }
     }
 }
 

@@ -1,9 +1,9 @@
 {
 	"info": {
-		"_postman_id": "1612e8e7-e691-4ba5-8647-7a7d725408d4",
+		"_postman_id": "4e6cf4eb-6163-46bf-9639-0b92541a3a24",
 		"name": "Chat API",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
-		"_exporter_id": "33642353"
+		"_exporter_id": "34151778"
 	},
 	"item": [
 		{
@@ -27,12 +27,11 @@
 									}
 								},
 								"url": {
-									"raw": "http://localhost:3000/v1/auth/register",
+									"raw": "http://{{baseDomain}}/v1/auth/register",
 									"protocol": "http",
 									"host": [
-										"localhost"
+										"{{baseDomain}}"
 									],
-									"port": "3000",
 									"path": [
 										"v1",
 										"auth",
@@ -44,6 +43,21 @@
 						},
 						{
 							"name": "/login",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"const response = pm.response;\r",
+											"if(response.code == 200) {\r",
+											"    pm.collectionVariables.set(\"token\", response.json()[\"data\"][\"token\"]);\r",
+											"}"
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								}
+							],
 							"request": {
 								"method": "POST",
 								"header": [],
@@ -57,12 +71,11 @@
 									}
 								},
 								"url": {
-									"raw": "http://localhost:3000/v1/auth/login",
+									"raw": "http://{{baseDomain}}/v1/auth/login",
 									"protocol": "http",
 									"host": [
-										"localhost"
+										"{{baseDomain}}"
 									],
-									"port": "3000",
 									"path": [
 										"v1",
 										"auth",
@@ -71,8 +84,64 @@
 								}
 							},
 							"response": []
+						},
+						{
+							"name": "/logout",
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{token}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "http://{{baseDomain}}/v1/auth/logout",
+									"protocol": "http",
+									"host": [
+										"{{baseDomain}}"
+									],
+									"path": [
+										"v1",
+										"auth",
+										"logout"
+									]
+								}
+							},
+							"response": []
 						}
 					]
+				},
+				{
+					"name": "user",
+					"item": [
+						{
+							"name": "New Request",
+							"request": {
+								"method": "GET",
+								"header": []
+							},
+							"response": []
+						}
+					]
+				},
+				{
+					"name": "socket",
+					"item": []
 				}
 			]
 		}
@@ -103,6 +172,11 @@
 		{
 			"key": "token",
 			"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6InVzZXJuYW1lIiwiaWF0IjoxNzE0NTg4MjEyLCJleHAiOjE3MTUxOTMwMTJ9.0t9dJq_1a19zFXjOEyDWO2ZkgzZrpf026lIxA_E4fHw",
+			"type": "string"
+		},
+		{
+			"key": "baseDomain",
+			"value": "localhost:3000",
 			"type": "string"
 		}
 	]
